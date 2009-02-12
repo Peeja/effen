@@ -11,13 +11,19 @@
       return self;
     }
   }
+  
+  $.effen = function(selector, fns) {
+    $.effen.store[selector] = fns;
+  }
+  $.effen.store = {};
+  
   function define(self, name, fn) {
     self.data(namespacedName(name), fn);
   };
   function apply(self, name, args) {
     var result;
     self.each(function(i, item) {
-      var fn = $(item).data(namespacedName(name));
+      var fn = $(item).data(namespacedName(name)) || liveFn(item, name);
       if (fn)
         result = fn.apply(item, args);
       else
@@ -27,5 +33,19 @@
   };
   function namespacedName(name) {
     return 'fn.' + name;
+  }
+  function liveFn(item, name) {
+    var fn;
+    $.each($.effen.store, function(selector, fns) {
+      // Filter out should and should_not, which jspec adds to Object's prototype.
+      // This is a bad smell.
+      if (selector == $.effen.store.should ||
+          selector == $.effen.store.should_not)
+        return true; // Skip.
+      
+      if ($(item).is(selector) && fns[name])
+        fn = fns[name];
+    });
+    return fn;
   }
 })(jQuery);
