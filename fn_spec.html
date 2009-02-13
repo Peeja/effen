@@ -70,7 +70,8 @@
             $.effen("#thing_2", { call: function() { called.thing_2 = true } });
             var elements = $("<div id='thing_1'></div>").add($("<div id='thing_2'></div>"));
             elements.fn('call');
-            called.should("==", {thing_1: true, thing_2: true});
+            called.thing_1.should("==", true);
+            called.thing_2.should("==", true);
           })
         });
       });
