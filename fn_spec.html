@@ -35,6 +35,12 @@
             elements.fn('call');
             i.should("==", 2);
           });
+          it("overrides a function bound by $.effen", function() {
+            var element = $("<div></div>");
+            element.fn({ name: function() { return "fn version" } });
+            $.effen("div", { name: function() { return "$.effen version" } })
+            element.fn('name').should("==", "fn version");
+          });
         });
         
         jspec.describe("$.effen", function() {
